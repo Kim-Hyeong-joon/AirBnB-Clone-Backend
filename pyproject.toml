@@ -10,6 +10,7 @@ packages = [{include = "airbnb_clone_backend"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 django = "^4.1.5"
+black = "^22.12.0"
 
 
 [build-system]
