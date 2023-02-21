@@ -23,6 +23,26 @@ class WordFilter(admin.SimpleListFilter):
             return reviews
 
 
+class GoodAndBadFilter(admin.SimpleListFilter):
+
+    title = "Filter by good and bad"
+
+    parameter_name = "is_good"
+
+    def lookups(self, request, model_admin):
+        return [
+            ("good", "Good"),
+            ("bad", "Bad"),
+        ]
+
+    def queryset(self, request, reviews):
+        word = self.value()
+        if word == "good":
+            return reviews.filter(rating__gte=3)
+        else:
+            return reviews.filter(rating__lt=3)
+
+
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
 
@@ -37,4 +57,5 @@ class ReviewAdmin(admin.ModelAdmin):
         "room__category",
         "room__pet_friendly",
         WordFilter,
+        GoodAndBadFilter,
     )
