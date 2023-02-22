@@ -31,16 +31,18 @@ class GoodAndBadFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return [
-            ("good", "Good"),
-            ("bad", "Bad"),
+            ("true", "Good"),
+            ("false", "Bad"),
         ]
 
     def queryset(self, request, reviews):
         word = self.value()
-        if word == "good":
+        if word == "true":
             return reviews.filter(rating__gte=3)
-        else:
+        elif word == "false":
             return reviews.filter(rating__lt=3)
+        else:
+            return reviews
 
 
 @admin.register(Review)
