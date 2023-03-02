@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound, NotAuthenticated
+from rest_framework.exceptions import NotFound, NotAuthenticated, ParseError
+from categories.models import Category
 from .models import Amenity, Room
 from .serializers import (
     AmenitySerializer,
@@ -67,7 +68,23 @@ class Rooms(APIView):
         if request.user.is_authenticated:
             serializer = RoomDetailSerializer(data=request.data)
             if serializer.is_valid():
-                room = serializer.save(owner=request.user)
+                category_pk = request.data.get("category")
+                if not category_pk:
+                    raise ParseError
+                try:
+                    category = Category.objects.get(pk=category_pk)
+                    if (
+                        category.kind
+                        == Category.CategoryKindChoices.EXPERIENCES
+                    ):
+                        raise ParseError
+
+                except Category.DoesNotExist:
+                    raise ParseError
+                room = serializer.save(
+                    owner=request.user,
+                    category=category,
+                )
                 return Response(RoomDetailSerializer(room).data)
             else:
                 return Response(serializer.errors)
