@@ -117,6 +117,47 @@ class RoomDetail(APIView):
         serializer = RoomDetailSerializer(room)
         return Response(serializer.data)
 
+    def put(self, request, pk):
+        room = self.get_object(pk)
+        if not request.user.is_authenticated:
+            raise NotAuthenticated
+        if room.owner != request.user:
+            raise PermissionDenied
+        serializer = RoomDetailSerializer(room, data=request.data, partial=True)
+        if serializer.is_valid():
+            category_pk = request.data.get("category")
+            if category_pk:  # if the category is updated (becuase it's partial)
+                try:
+                    category = Category.objects.get(pk=category_pk)
+                    if (
+                        category.kind
+                        == category.CategoryKindChoices.EXPERIENCES
+                    ):
+                        raise ParseError("the category kind should be 'rooms'")
+                except Category.DoesNotExist:
+                    raise NotFound
+                room = serializer.save(category=category)
+            else:  # if the category is not updated
+                room = serializer.save()
+
+            amenities = request.data.get("amenities")
+            if amenities:  # if the amenities are updated
+                room.amenities.clear()
+                for amenity_pk in amenities:
+                    try:
+                        amenity = Amenity.objects.get(pk=amenity_pk)
+                        room.amenities.add(amenity)
+                    except Amenity.DoesNotExist:
+                        raise NotFound(
+                            "The amenities are not updated correctly"
+                        )
+            else:  # if the amenities are not updated
+                pass
+
+            return Response(RoomDetailSerializer(room).data)
+        else:
+            return Response(serializer.errors)
+
     def delete(self, request, pk):
         room = self.get_object(pk)
         if not request.user.is_authenticated:
