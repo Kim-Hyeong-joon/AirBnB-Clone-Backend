@@ -6,4 +6,5 @@ urlpatterns = [
     path("me", views.Me.as_view()),
     path("change-password", views.ChangePassword.as_view()),
     path("@<str:username>", views.PublicUser.as_view()),
+    path("@<str:username>/reviews", views.PublicUserReviews.as_view()),
 ]

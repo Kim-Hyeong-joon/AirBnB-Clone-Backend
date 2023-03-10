@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -5,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ParseError, NotFound
 from . import serializers
 from .models import User
+from reviews.serializers import ReviewSerializer
 
 
 class Me(APIView):
@@ -53,7 +55,7 @@ class PublicUser(APIView):
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             raise NotFound
-        serializer = serializers.PrivateUserSerializer(user)
+        serializer = serializers.PublicUserSerializer(user)
         return Response(serializer.data)
 
 
@@ -73,3 +75,25 @@ class ChangePassword(APIView):
             return Response(status=status.HTTP_200_OK)
         else:
             raise ParseError
+
+
+class PublicUserReviews(APIView):
+    def get_object(self, username):
+        try:
+            return User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise NotFound
+
+    def get(self, request, username):
+        try:
+            page = request.query_params.get("page", 1)
+            page = int(page)
+        except:
+            page = 1
+        page_size = settings.PAGE_SIZE
+        start = (page - 1) * page_size
+        end = start + page_size
+        user = self.get_object(username)
+        reviews = user.reviews.all()[start:end]
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
