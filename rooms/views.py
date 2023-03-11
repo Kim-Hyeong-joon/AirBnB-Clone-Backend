@@ -1,7 +1,8 @@
+import datetime
+import pytz
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
-import datetime
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.status import HTTP_204_NO_CONTENT
@@ -109,7 +110,11 @@ class Rooms(APIView):
                     for amenity_pk in amenities:
                         amenity = Amenity.objects.get(pk=amenity_pk)
                         room.amenities.add(amenity)
-                    return Response(RoomDetailSerializer(room).data)
+                    serializer = RoomDetailSerializer(
+                        room,
+                        context={"request": request},
+                    )
+                    return Response(serializer.data)
             except Exception:
                 raise ParseError("Amenity not found")
         else:
@@ -138,7 +143,11 @@ class RoomDetail(APIView):
         room = self.get_object(pk)
         if room.owner != request.user:
             raise PermissionDenied
-        serializer = RoomDetailSerializer(room, data=request.data, partial=True)
+        serializer = RoomDetailSerializer(
+            room,
+            data=request.data,
+            partial=True,
+        )
         if serializer.is_valid():
             category_pk = request.data.get("category")
             if category_pk:  # if the category is updated (becuase it's partial)
@@ -293,7 +302,12 @@ class RoomBookings(APIView):
             year = now.year
 
         date_range_start = datetime.date(year, month, 1)
-        date_range_end = datetime.date(year, month + 1, 1)
+        if month == 12:
+            date_range_end = datetime.datetime(year + 1, 1, 1, tzinfo=pytz.UTC)
+        else:
+            date_range_end = datetime.datetime(
+                year, month + 1, 1, tzinfo=pytz.UTC
+            )
 
         room = self.get_object(pk)
         bookings = Booking.objects.filter(

@@ -1,3 +1,4 @@
+import datetime
 from django.utils import timezone
 from rest_framework import serializers
 from .models import Booking
@@ -53,3 +54,27 @@ class PublicBookingSerializer(serializers.ModelSerializer):
             "experience_time",
             "guests",
         )
+
+
+class CreateExperienceBookingSerializer(serializers.ModelSerializer):
+
+    experience_time = serializers.DateTimeField()
+
+    class Meta:
+        model = Booking
+        fields = [
+            "experience_time",
+            "guests",
+        ]
+
+    def validate_experience_time(self, value):
+        experience = self.context["experience"]
+        if value.time() != experience.start:
+            raise serializers.ValidationError(
+                "Experience time have to be same with the experience start of time"
+            )
+        if experience.bookings.filter(experience_time=value).exists():
+            raise serializers.ValidationError(
+                "that experience is already taken"
+            )
+        return value

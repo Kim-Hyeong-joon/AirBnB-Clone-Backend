@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Photo
+from .models import Photo, Video
 
 
 class PhotoSerializer(ModelSerializer):
@@ -9,4 +9,13 @@ class PhotoSerializer(ModelSerializer):
             "pk",
             "file",
             "description",
+        ]
+
+
+class VideoSerializer(ModelSerializer):
+    class Meta:
+        model = Video
+        fields = [
+            "pk",
+            "file",
         ]

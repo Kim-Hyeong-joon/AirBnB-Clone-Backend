@@ -20,26 +20,26 @@ class RoomDetailSerializer(serializers.ModelSerializer):
     owner = TinyUserSerializer(
         read_only=True,
     )
-    """ 
+
     amenities = AmenitySerializer(
         read_only=True,
-        many=True,)
-    """
+        many=True,
+    )
+
     category = CategorySerializer(
         read_only=True,
     )
 
     rating = serializers.SerializerMethodField()
-    is_owner = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField(read_only=True)
     is_liked = serializers.SerializerMethodField()
     photos = PhotoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Room
-        exclude = ["amenities"]
+        fields = "__all__"
 
     def get_rating(self, room):
-        print(self.context)
         return room.rating()
 
     def get_is_owner(self, room):

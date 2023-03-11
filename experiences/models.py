@@ -1,5 +1,6 @@
 from django.db import models
 from common.models import CommonModel
+import datetime
 
 
 class Experience(CommonModel):
@@ -40,6 +41,33 @@ class Experience(CommonModel):
         on_delete=models.SET_NULL,
         related_name="experiences",
     )
+
+    def hour(experience):
+        start = experience.start
+        end = experience.end
+        datetime_start = datetime.datetime.combine(
+            datetime.date.today(),
+            start,
+        )
+        datetime_end = datetime.datetime.combine(
+            datetime.date.today(),
+            end,
+        )
+        datetime_diff = datetime_end - datetime_start
+        datetime_diff_in_hour = datetime_diff.total_seconds() / 3600
+        return f"{datetime_diff_in_hour} 시간"
+
+    def rating(experience):
+        reviews = experience.reviews.all().values("rating")
+        reviews_count = reviews.count()
+        if reviews_count == 0:
+            return 0
+        else:
+            total_rating = 0
+            for review in reviews:
+                total_rating += review["rating"]
+            rating_average = round(total_rating / reviews_count)
+            return rating_average
 
     def __str__(self) -> str:
         return self.name
