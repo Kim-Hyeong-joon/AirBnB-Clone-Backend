@@ -1,5 +1,6 @@
 from rest_framework.test import APITestCase
 from . import models
+from users.models import User
 
 
 class TestAmenities(APITestCase):
@@ -178,3 +179,26 @@ class TestAmenity(APITestCase):
         response = self.client.delete("/api/v1/rooms/amenities/1")
 
         self.assertEqual(response.status_code, 204, "status code is not 204")
+
+
+class TestRooms(APITestCase):
+    def setUp(self):
+        user = User.objects.create(
+            username="test",
+        )
+        user.set_password("123")
+        user.save()
+        self.user = user
+
+    def test_create_room(self):
+
+        response = self.client.post("/api/v1/rooms/")
+
+        self.assertEqual(response.status_code, 403, "status code is not 403")
+
+        self.client.force_login(
+            self.user,
+        )
+
+        response = self.client.post("/api/v1/rooms/")
+        print(response.json())
