@@ -162,7 +162,7 @@ class RoomDetail(APIView):
         )
         if serializer.is_valid():
             category_pk = request.data.get("category")
-            if category_pk:  # if the category is updated (becuase it's partial)
+            if category_pk:  # if the category is updated
                 try:
                     category = Category.objects.get(pk=category_pk)
                     if (
@@ -252,7 +252,7 @@ class RoomAmenities(APIView):
         try:
             page = request.query_params.get("page", 1)
             page = int(page)
-        except:
+        except ValueError:
             page = 1
         page_size = settings.PAGE_SIZE
         start = (page - 1) * page_size
@@ -309,7 +309,7 @@ class RoomBookings(APIView):
                 month = now.month
             elif (year == now.year) and (month < now.month):
                 month = now.month
-        except:
+        except ValueError:
             month = now.month
             year = now.year
 
