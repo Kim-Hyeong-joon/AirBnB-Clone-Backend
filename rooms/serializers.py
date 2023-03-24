@@ -10,6 +10,7 @@ class AmenitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Amenity
         fields = (
+            "pk",
             "name",
             "description",
         )
