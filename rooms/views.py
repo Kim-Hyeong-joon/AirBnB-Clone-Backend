@@ -323,12 +323,21 @@ class RoomBookings(APIView):
             )
 
         room = self.get_object(pk)
-        bookings = Booking.objects.filter(
-            room=room,
-            kind=Booking.BookingKindChoices.ROOM,
-            check_in__gte=date_range_start,
-            check_in__lt=date_range_end,
-        )
+        if room.owner == request.user:
+            bookings = Booking.objects.filter(
+                room=room,
+                kind=Booking.BookingKindChoices.ROOM,
+                check_in__gte=date_range_start,
+                check_in__lt=date_range_end,
+            )
+        else:
+            bookings = Booking.objects.filter(
+                room=room,
+                kind=Booking.BookingKindChoices.ROOM,
+                check_in__gte=date_range_start,
+                check_in__lt=date_range_end,
+                user=request.user,
+            )
         serializer = PublicBookingSerializer(bookings, many=True)
         return Response(serializer.data)
 
@@ -336,7 +345,7 @@ class RoomBookings(APIView):
         room = self.get_object(pk)
         serializer = CreateRoomBookingSerializer(
             data=request.data,
-            context={"rooms", room},
+            context={"room": room},
         )
         if serializer.is_valid():
             booking = serializer.save(
@@ -347,7 +356,7 @@ class RoomBookings(APIView):
             serializer = PublicBookingSerializer(booking)
             return Response(serializer.data)
         else:
-            return Response(serializer.errors)
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
 class RoomBookingCheck(APIView):

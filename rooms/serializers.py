@@ -30,11 +30,12 @@ class RoomDetailSerializer(serializers.ModelSerializer):
     category = CategorySerializer(
         read_only=True,
     )
+    photos = PhotoSerializer(many=True, read_only=True)
 
     rating = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField(read_only=True)
     is_liked = serializers.SerializerMethodField()
-    photos = PhotoSerializer(many=True, read_only=True)
+    reviews_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Room
@@ -58,6 +59,9 @@ class RoomDetailSerializer(serializers.ModelSerializer):
                     rooms__pk=room.pk,
                 ).exists()
         return False
+
+    def get_reviews_count(self, room):
+        return room.reviews.count()
 
 
 class RoomListSerializer(serializers.ModelSerializer):
