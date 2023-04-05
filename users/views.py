@@ -149,9 +149,13 @@ class JWTLogIn(APIView):
                 settings.SECRET_KEY,
                 algorithm="HS256",
             )
+            login(request, user)
             return Response({"token": token})
+
         else:
-            return Response({"error": "wrong password"})
+            return Response(
+                {"error": "wrong password"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class GithubLogIn(APIView):
