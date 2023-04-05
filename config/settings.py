@@ -214,4 +214,4 @@ if not DEBUG:
         send_default_pii=True,
     )
 
-SESSION_COOKIE_DOMAIN = "https://airbnb-frontend-syyh.onrender.com"
+SESSION_COOKIE_DOMAIN = "airbnb-frontend-syyh.onrender.com"
