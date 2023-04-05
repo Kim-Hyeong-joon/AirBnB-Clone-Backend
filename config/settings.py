@@ -60,7 +60,6 @@ CUSTOM_APPS = [
     "bookings.apps.BookingsConfig",
     "medias.apps.MediasConfig",
     "direct_messages.apps.DirectMessagesConfig",
-    "corsheaders",
 ]
 
 SYSTEM_APPS = [
