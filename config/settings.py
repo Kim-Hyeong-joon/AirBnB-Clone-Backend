@@ -34,9 +34,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = "RENDER" not in os.environ
 
-ALLOWED_HOSTS = [
-    "localhost",
-]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME:
@@ -215,3 +213,5 @@ if not DEBUG:
         traces_sample_rate=1.0,
         send_default_pii=True,
     )
+
+SESSION_COOKIE_DOMAIN = ".airbnb-frontend-syyh.onrender.com"
