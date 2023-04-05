@@ -222,4 +222,4 @@ CORS_ORIGIN_WHITELIST = [
 ]
 SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_DOMAIN = "https://airbnb-frontend-syyh.onrender.com"
+SESSION_COOKIE_DOMAIN = ".https://airbnb-frontend-syyh.onrender.com"
