@@ -60,6 +60,7 @@ CUSTOM_APPS = [
     "bookings.apps.BookingsConfig",
     "medias.apps.MediasConfig",
     "direct_messages.apps.DirectMessagesConfig",
+    "corsheaders",
 ]
 
 SYSTEM_APPS = [
@@ -214,4 +215,7 @@ if not DEBUG:
         send_default_pii=True,
     )
 
-SESSION_COOKIE_DOMAIN = "airbnb-frontend-syyh.onrender.com"
+
+CORS_ORIGIN_WHITELIST = [
+    "https://airbnb-frontend-syyh.onrender.com",
+]
