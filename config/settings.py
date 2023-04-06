@@ -194,8 +194,8 @@ REST_FRAMEWORK = {
 }
 
 if DEBUG:
-    CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:3000"]
-    CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:3000"]
+    CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:3000", "http://localhost:3000"]
+    CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:3000", "http://localhost:3000"]
 
 else:
     CORS_ALLOWED_ORIGINS = ["https://airbnb-frontend-syyh.onrender.com"]
@@ -217,9 +217,9 @@ if not DEBUG:
     )
 
 
-""" CORS_ORIGIN_WHITELIST = [
-    "https://airbnb-frontend-syyh.onrender.com",
-]
-SESSION_COOKIE_SAMESITE = "None"
+""" SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_DOMAIN = ".https://airbnb-frontend-syyh.onrender.com" """
+SESSION_COOKIE_DOMAIN = "127.0.0.1"
+ CORS_ORIGIN_WHITELIST = [
+    "localhost:3000",
+] """
