@@ -166,12 +166,10 @@ class JWTLogIn(APIView):
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
         token, created = Token.objects.get_or_create(user=user)
-        login(request, user)
         return Response({"token": token.key})
 
 
@@ -305,7 +303,8 @@ class SignUp(APIView):
         user.set_password(password)
         user.save()
 
-        login(request, user)
+        token, created = Token.objects.get_or_create(user=user)
         return Response(
-            {"ok": "account is created!"}, status=status.HTTP_200_OK
+            {"ok": "account is created!", "token": token.key},
+            status=status.HTTP_200_OK,
         )
