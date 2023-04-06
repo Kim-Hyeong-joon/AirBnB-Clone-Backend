@@ -202,7 +202,10 @@ class GithubLogIn(APIView):
             try:
                 user = User.objects.get(email=user_emails[0]["email"])
                 login(request, user)
-                return Response(status=status.HTTP_200_OK)
+                token, created = Token.objects.get_or_create(user=user)
+                return Response(
+                    {"token": token.key}, status=status.HTTP_200_OK
+                )
             except User.DoesNotExist:
                 user = User.objects.create(
                     username=user_data.get("login"),
@@ -213,7 +216,10 @@ class GithubLogIn(APIView):
                 user.set_unusable_password()
                 user.save()
                 login(request, user)
-                return Response(status=status.HTTP_200_OK)
+                token, created = Token.objects.get_or_create(user=user)
+                return Response(
+                    {"token": token.key}, status=status.HTTP_200_OK
+                )
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -229,7 +235,7 @@ class KakaoLogIn(APIView):
                 data={
                     "grant_type": "authorization_code",
                     "client_id": "69972b9d88c49a0c80f5a89b99941eba",
-                    "redirect_uri": "http://127.0.0.1:3000/social/kakao",
+                    "redirect_uri": "https://airbnb-frontend-syyh.onrender.com/social/kakao",
                     "code": code,
                 },
             )
