@@ -253,7 +253,10 @@ class KakaoLogIn(APIView):
             try:
                 user = User.objects.get(email=kakao_account.get("email"))
                 login(request, user)
-                return Response(status=status.HTTP_200_OK)
+                token, created = Token.objects.get_or_create(user=user)
+                return Response(
+                    {"token": token.key}, status=status.HTTP_200_OK
+                )
             except User.DoesNotExist:
                 user = User.objects.create(
                     email=kakao_account.get("email"),
@@ -263,7 +266,10 @@ class KakaoLogIn(APIView):
                 )
                 user.set_unusable_password()
                 user.save()
-                return Response(status=status.HTTP_200_OK)
+                token, created = Token.objects.get_or_create(user=user)
+                return Response(
+                    {"token": token.key}, status=status.HTTP_200_OK
+                )
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
