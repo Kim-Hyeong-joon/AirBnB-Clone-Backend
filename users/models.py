@@ -29,7 +29,7 @@ class User(AbstractUser):
         default="",
     )
     is_host = models.BooleanField(
-        default=False,
+        default=True,
     )
     gender = models.CharField(
         max_length=10,
